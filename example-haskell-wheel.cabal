@@ -12,6 +12,11 @@ copyright:       (c) 2023 Wen Kokke
 build-type:      Custom
 extra-doc-files: CHANGELOG.md
 
+flag force-standalone
+  description: Force standalone
+  default:     False
+  manual:      True
+
 custom-setup
   setup-depends:
     , base       >=4
@@ -35,11 +40,19 @@ foreign-library _binding
     options:      standalone
     mod-def-file: src/example_haskell_wheel/binding.def
 
+  -- 14-10-2024:
+  -- Standalone builds for other operating systems
+  if flag(force-standalone)
+    options: standalone
+
   c-sources:        src/example_haskell_wheel/binding_wrap.c
   hs-source-dirs:   src
   other-modules:
     ExampleHaskellWheelBinding
     Paths_example_haskell_wheel
 
-  build-depends:    base >=4.7 && <5
+  build-depends:
+    , base        >=4.7 && <5
+    , bytestring  >=0.9 && <0.13
+
   default-language: Haskell2010

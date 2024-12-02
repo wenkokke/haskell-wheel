@@ -133,6 +133,7 @@ jobs:
         env:
           CIBW_ARCHS: "${{ matrix.job.os.arch }}"
           CIBW_BUILD: "*${{ matrix.job.os.plat }}*"
+          CIBW_SKIP: "cp38-musllinux_x86_64"
           MACOSX_DEPLOYMENT_TARGET: "10.10"
 
       - name: Upload wheels

@@ -14,7 +14,19 @@ ext_module = Extension(
 
 
 class cabal_build_ext(build_ext):
+    user_options = [("force-standalone=", None, "Force standalone")]
+
+    def initialize_options(self) -> None:
+        # Default to standalone on musllinux
+        if self._is_musl():
+            self.force_standalone = True
+        else:
+            self.force_standalone = False
+        super().initialize_options()
+
     def finalize_options(self) -> None:
+        assert self.force_standalone in (True, False, None, "True", "False")
+        self.force_standalone = self.force_standalone or self.force_standalone == "True"
         super().finalize_options()
 
         if sys.platform in ["win32", "cygwin"]:
@@ -64,6 +76,7 @@ class cabal_build_ext(build_ext):
                 self.write_stub(build_lib, ext)
 
     def cabal_configure_ext(self, ext: Extension) -> None:
+        flags = ["-f+force-standalone" if self.force_standalone else None]
         library_dirs = [*(self.library_dirs or []), *(ext.library_dirs or [])]
         include_dirs = [*(self.include_dirs or []), *(ext.include_dirs or [])]
         libraries = [*(self.libraries or []), *(ext.libraries or [])]
@@ -72,6 +85,7 @@ class cabal_build_ext(build_ext):
         self.cabal(
             [
                 "configure",
+                *(flag for flag in flags if flag),
                 *(f"--extra-lib-dirs={dir}" for dir in library_dirs),
                 *(f"--extra-include-dirs={dir}" for dir in include_dirs),
                 *(f"--ghc-options=-optl-l{library}" for library in libraries),
@@ -122,6 +136,17 @@ class cabal_build_ext(build_ext):
             if self._cabal is None:
                 raise OSError("could not find executable 'cabal'")
         return self._cabal
+
+    def _is_musl(self):
+        try:
+            import platform
+            import packaging._musllinux
+
+            libc, libc_ver = platform.libc_ver()
+            musl_ver = packaging._musllinux._get_musl_version(sys.executable)
+            return sys.platform == "linux" and libc != "glibc" and musl_ver is not None
+        except ImportError:
+            return False
 
 
 def main() -> None:

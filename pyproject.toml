@@ -123,12 +123,12 @@ deps =
   auditwheel; sys_platform == 'linux'
   delocate; sys_platform == 'darwin'
 package_glob =
-  py37-lin: {package_root}{/}dist{/}*cp37*manylinux*.whl
-  py38-lin: {package_root}{/}dist{/}*cp38*manylinux*.whl
-  py39-lin: {package_root}{/}dist{/}*cp39*manylinux*.whl
-  py310-lin: {package_root}{/}dist{/}*cp310*manylinux*.whl
-  py311-lin: {package_root}{/}dist{/}*cp311*manylinux*.whl
-  py312-lin: {package_root}{/}dist{/}*cp312*manylinux*.whl
+  py37-lin: {package_root}{/}dist{/}*cp37*linux*.whl
+  py38-lin: {package_root}{/}dist{/}*cp38*linux*.whl
+  py39-lin: {package_root}{/}dist{/}*cp39*linux*.whl
+  py310-lin: {package_root}{/}dist{/}*cp310*linux*.whl
+  py311-lin: {package_root}{/}dist{/}*cp311*linux*.whl
+  py312-lin: {package_root}{/}dist{/}*cp312*linux*.whl
   py37-mac: {package_root}{/}dist{/}*cp37*macosx*.whl
   py38-mac: {package_root}{/}dist{/}*cp38*macosx*.whl
   py39-mac: {package_root}{/}dist{/}*cp39*macosx*.whl
